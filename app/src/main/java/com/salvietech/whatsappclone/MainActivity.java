@@ -43,7 +43,12 @@ public class MainActivity extends AppCompatActivity {
 
         mSend.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) { startPhoneNumberVerification(); }
+            public void onClick(View v) {
+                if(mVerificationId != null)
+                    verifyPhoneNumberWithCode();
+                else
+                    startPhoneNumberVerification();
+            }
         });
 
         mCallBacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
@@ -64,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
                 mVerificationId = verificationId;
                 mSend.setText("Verify Code");
             }
-        }
+        };
     }
 
     private void verifyPhoneNumberWithCode(String verificationId, String code) {
@@ -79,13 +84,15 @@ public class MainActivity extends AppCompatActivity {
                 if(task.isSuccessful())
                     userIsLoggedIn();
             }
-        })
+        });
     }
 
     private void userIsLoggedIn() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if(user != null) {
             startActivity(new Intent(String.valueOf(getApplicationContext())), MainPageActivity.class);
+            finish();
+            return;
         }
     }
 
